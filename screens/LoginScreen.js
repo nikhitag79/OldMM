@@ -3,10 +3,28 @@ import React, { FC, ReactElement, useState } from 'react'
 import {StatusBar} from 'expo-status-bar';
 import Animated,{ FadeIn, FadeOut } from 'react-native-reanimated';
 import {useNavigation} from "@react-navigation/native";
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth} from '../config/firebase'
 
 
 export default function LoginScreen() {
   const navigation = useNavigation()
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+
+  const handleSubmit = async ()=>{
+    if(email && password){
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+      }
+      catch(err){
+        console.log('got error: ', err.message);
+      }
+    }
+  }
+
+
   const handleRegister = () => {
     navigation.navigate("SignUp")
 
@@ -31,13 +49,13 @@ export default function LoginScreen() {
           </View>
           <View className = "flex items-center mx-4 space-y-4">
             <View className = "bg-black/5 p-5 rounded-2xl w-full">
-              <TextInput placeholder='Email' placeholderTextColor={"gray"}/>
+              <TextInput placeholder='Email'value = {email} onChangeText={value=> setEmail(value)}  placeholderTextColor={"gray"}/>
             </View>
             <View className = "bg-black/5 p-5 rounded-2xl w-full mb-3">
-              <TextInput placeholder='Password' placeholderTextColor={"gray"} secureTextEntry/>
+              <TextInput placeholder='Password' value = {password} onChangeText={value=> setPassword(value)}  placeholderTextColor={"gray"} secureTextEntry/>
             </View>
             <View className = "w-full">
-              <TouchableOpacity className="w-full bg-sky-400 p-3 rounded-2xl mb-3">
+              <TouchableOpacity className="w-full bg-sky-400 p-3 rounded-2xl mb-3" onPress={handleSubmit}>
                 <Text className="text-xl font-bond text-white text-enter"> Login</Text>
               </TouchableOpacity>
             </View>
